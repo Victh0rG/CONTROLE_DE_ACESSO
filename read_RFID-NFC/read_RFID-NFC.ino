@@ -16,8 +16,8 @@ PN532 nfc(pn532spi);
 #include <PN532.h> 
 #include <SoftwareSerial.h> //
 SoftwareSerial SWSerial(10, 11); //RX, TX
-PN532_HSU pn532swhsu( SWSerial ); //modulo de interface com PN532
-PN532 nfc(pn532hsu);
+PN532_HSU pn532swhsu( Serial ); //modulo de interface com PN532
+PN532 nfc( pn532hsu );
 
 #else
 #include <Wire.h>
@@ -37,7 +37,7 @@ void setup(void)
   uint32_t versiondata = nfc.getFirmwareVersion();
 
   if(! versiondata ){
-    Serial.print("Não econtrei o modulo PN532 :( ");
+    Serial.print("Não econtrei o modulo PN53x  :( ");
     while(1); //para a execucao
   }
 
