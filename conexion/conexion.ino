@@ -1,3 +1,4 @@
+
 //Biblioteca -----------------------------------------------------------------------------------------
 #include <Adafruit_Fingerprint.h>                           // Responsável pelo Sensor Biométrico
 #include <WiFi.h>
@@ -60,7 +61,7 @@ void setup(){
         Serial.println("Não foi possível conectar ao sensor. Verifique a senha ou a conexão");
         while(true){};                                      // Loop Infinito
     }
-
+  // Saida para os Leds verde e vermelho ---------------------------------------------------------
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
 
@@ -116,6 +117,11 @@ void setup(){
 
     // acender um led indicando pra pessoa colocar o dedo na funcao de cadastrar na hora que tira e coloca o dedo coloca pra esse msm led piscar ou algo do tipo
     int CadDigital = cadastraDigital();
+    int naoCadDigital = -1;
+    if (CadDigital != naoCadDigital){
+      blinkLED( LED2, 3000);
+    }
+    
     if(CadDigital >0){
       Serial.print("mandado digital para o Servidor Externo");
 
@@ -158,6 +164,8 @@ void setup(){
       // Envie a resposta JSON
       server.send(404, "application/json", jsonResponse);
       Serial.println("falha ao cadastrar digital");
+
+      blinkLED( LED1, 3000);
     }
 });
 
@@ -206,6 +214,16 @@ int getFingerprintID() {
   // found a match!
   Serial.print("\nEncontrado ID #"); Serial.println(fingerSensor.fingerID);
   return fingerSensor.fingerID;
+}
+
+void blinkLED(int ledPin, int duration) {
+    unsigned long startMillis = millis();
+    while (millis() - startMillis < duration) {
+        digitalWrite(ledPin, HIGH);
+        delay(500); // LED ligado por 500 ms
+        digitalWrite(ledPin, LOW);
+        delay(500); // LED desligado por 500 ms
+    }
 }
 
  //METODO PARA CIRAR UM LAB --> RETONRNAR UM ENEDERECO IP
@@ -366,7 +384,7 @@ void limpaDatabase(){
 // retornar o id da digital
 
 
-// Pagina HTML ---------------------------------------------------------------------------------------
+// Pagina HTML ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void sendHtml() {
   String response = R"(
     <!DOCTYPE html><html>
@@ -402,7 +420,7 @@ void sendHtml() {
   server.send(200, "text/html", response);
 }
 
-//  Cliente requisição -------------------------------------------------------------------------------
+//  Cliente requisição --------------------------------------------------------------------------------------------------------------------------------------------------------------
 void httpLogin() {
     String serverUrl = "http://" + ipServidorExterno + ":8080/auth/login";
     const char* serverUrlCStr = serverUrl.c_str();
@@ -559,8 +577,3 @@ void sendCad() {
   server.send(201, "text/plain", "Lab criado", response);
 }
 */
-
-void loop() {
-    // put your main code here, to run repeatedly:   
-    
-}
